@@ -1,5 +1,6 @@
 package com.shoppingCart.Shopping_cart.controller;
 
+import com.shoppingCart.Shopping_cart.dto.ProductDto;
 import com.shoppingCart.Shopping_cart.exceptions.ResourceNotFoundException;
 import com.shoppingCart.Shopping_cart.model.Product;
 import com.shoppingCart.Shopping_cart.request.AddProductRequest;
@@ -24,8 +25,9 @@ public class ProductController {
     @GetMapping("/all")
     public ResponseEntity<ApiResponse> getAllProducts(){
         List<Product> products = productService.getAllProducts();
+        List<ProductDto> convertedProducts = productService.getConvertedProducts(products);
 
-        return ResponseEntity.ok(new ApiResponse("Success", products));
+        return ResponseEntity.ok(new ApiResponse("Success", convertedProducts));
     }
 
     @GetMapping("/product/{productId}/product")
