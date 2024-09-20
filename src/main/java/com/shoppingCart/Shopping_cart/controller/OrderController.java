@@ -1,6 +1,7 @@
 package com.shoppingCart.Shopping_cart.controller;
 
 
+import com.shoppingCart.Shopping_cart.dto.OrderDto;
 import com.shoppingCart.Shopping_cart.exceptions.ResourceNotFoundException;
 import com.shoppingCart.Shopping_cart.model.Order;
 import com.shoppingCart.Shopping_cart.response.ApiResponse;
@@ -35,7 +36,7 @@ public class OrderController {
     @GetMapping("/{orderId}/order")
     public ResponseEntity<ApiResponse> getOrderById(@PathVariable Long orderId) {
         try {
-            Order order = orderService.getOrder(orderId);
+            OrderDto order = orderService.getOrder(orderId);
             return ResponseEntity.ok(new ApiResponse("Item Order Success!", order));
         } catch (ResourceNotFoundException e) {
             return ResponseEntity.status(NOT_FOUND)
@@ -46,7 +47,7 @@ public class OrderController {
     @GetMapping("/{userId}/orders")
     public ResponseEntity<ApiResponse> getUserOrders(@PathVariable Long userId) {
         try {
-            List<Order> order = orderService.getUserOrders(userId);
+            List<OrderDto> order = orderService.getUserOrders(userId);
             return ResponseEntity.ok(new ApiResponse("Item Order Success!", order));
         } catch (ResourceNotFoundException e) {
             return ResponseEntity.status(NOT_FOUND)
