@@ -7,7 +7,6 @@ import com.shoppingCart.Shopping_cart.model.Order;
 import com.shoppingCart.Shopping_cart.response.ApiResponse;
 import com.shoppingCart.Shopping_cart.service.order.IOrderService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -26,7 +25,8 @@ public class OrderController {
     public ResponseEntity<ApiResponse> createOrder(@RequestParam Long userId) {
         try {
             Order order = orderService.placeOrder(userId);
-            return ResponseEntity.ok(new ApiResponse("Item Order Success!", order));
+            OrderDto orderDto = orderService.convertToDto(order);
+            return ResponseEntity.ok(new ApiResponse("Item Order Success!", orderDto));
         } catch (Exception e) {
             return ResponseEntity.status(INTERNAL_SERVER_ERROR)
                     .body(new ApiResponse("Error Occured!", e.getMessage()));
