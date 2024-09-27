@@ -30,7 +30,7 @@ public class DataInitializer implements ApplicationListener<ApplicationReadyEven
     }
 
     private void createDefaultUserInfoNotExist() {
-        Role userRole = roleRepository.findByName("ROLE_USER").get();
+        Role userRole = roleRepository.findByName("ROLE_USER");
         for (int i = 1; i <= 5; i++) {
             String defaultEmail = "user" + i + "@gmail.com";
             if (userRepository.existsByEmail(defaultEmail)) {
@@ -49,7 +49,7 @@ public class DataInitializer implements ApplicationListener<ApplicationReadyEven
     }
 
     private void createDefaultAdminInfoNotExist() {
-        Role adminRole = roleRepository.findByName("ROLE_ADMIN").get();
+        Role adminRole = roleRepository.findByName("ROLE_ADMIN");
         for (int i = 1; i <= 2; i++) {
             String defaultEmail = "admin" + i + "@gmail.com";
             if (userRepository.existsByEmail(defaultEmail)) {
