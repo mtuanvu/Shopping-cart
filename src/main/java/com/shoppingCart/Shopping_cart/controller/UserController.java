@@ -33,11 +33,11 @@ public class UserController {
     }
 
     @PostMapping("/add")
-    public ResponseEntity<ApiResponse> createUser(@RequestBody CreateUserRequest request){
+    public ResponseEntity<ApiResponse> createUser(@RequestBody CreateUserRequest request) {
         try {
             User user = userService.createUser(request);
             UserDto userDto = userService.convertUserToUserDto(user);
-            return ResponseEntity.ok(new ApiResponse("Create User Succsess", userDto));
+            return ResponseEntity.ok(new ApiResponse("Create User Success", userDto));
         } catch (AlreadyExistsException e) {
             return ResponseEntity.status(CONFLICT)
                     .body(new ApiResponse(e.getMessage(), null));

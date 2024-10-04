@@ -1,8 +1,10 @@
 package com.shoppingCart.Shopping_cart.service.user;
 
+import com.shoppingCart.Shopping_cart.data.RoleRepository;
 import com.shoppingCart.Shopping_cart.dto.UserDto;
 import com.shoppingCart.Shopping_cart.exceptions.AlreadyExistsException;
 import com.shoppingCart.Shopping_cart.exceptions.ResourceNotFoundException;
+import com.shoppingCart.Shopping_cart.model.Role;
 import com.shoppingCart.Shopping_cart.model.User;
 import com.shoppingCart.Shopping_cart.repository.UserRepository;
 import com.shoppingCart.Shopping_cart.request.CreateUserRequest;
@@ -15,6 +17,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -22,6 +26,7 @@ public class UserService implements IUserService {
     private final UserRepository userRepository;
     private final ModelMapper modelMapper;
     private final PasswordEncoder passwordEncoder;
+    private final RoleRepository roleRepository;
 
     @Override
     public User getUserById(Long userId) {
@@ -40,9 +45,17 @@ public class UserService implements IUserService {
                     user.setPassword(passwordEncoder.encode(request.getPassword()));
                     user.setFirstName(request.getFirstName());
                     user.setLastName(request.getLastName());
+
+                    // Gán mặc định vai trò ROLE_USER
+                    Role userRole = roleRepository.findByName("ROLE_USER")
+                            .orElseThrow(() -> new RuntimeException("Role not found!"));
+                    user.setRoles(Set.of(userRole));  // Gán vai trò mặc định ROLE_USER
+
                     return userRepository.save(user);
                 }).orElseThrow(() -> new AlreadyExistsException("Oops! " + request.getEmail() + " already exists!"));
     }
+
+
 
     @Override
     public User updateUser(UserUpdateRequest request, Long userId) {

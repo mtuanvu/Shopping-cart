@@ -1,7 +1,8 @@
 package com.shoppingCart.Shopping_cart.request;
 
 import lombok.Data;
-import org.hibernate.annotations.NaturalId;
+
+import java.util.Set;
 
 @Data
 public class CreateUserRequest {
@@ -9,4 +10,5 @@ public class CreateUserRequest {
     private String lastName;
     private String email;
     private String password;
+    private Set<String> roles;
 }
