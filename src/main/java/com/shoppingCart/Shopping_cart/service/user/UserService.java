@@ -46,10 +46,9 @@ public class UserService implements IUserService {
                     user.setFirstName(request.getFirstName());
                     user.setLastName(request.getLastName());
 
-                    // Gán mặc định vai trò ROLE_USER
-                    Role userRole = roleRepository.findByName("ROLE_USER")
-                            .orElseThrow(() -> new RuntimeException("Role not found!"));
-                    user.setRoles(Set.of(userRole));  // Gán vai trò mặc định ROLE_USER
+                    Role defaultRole = roleRepository.findByName("ROLE_USER")
+                            .orElseThrow(() -> new RuntimeException("Role not found"));
+                    user.setRoles(Set.of(defaultRole));
 
                     return userRepository.save(user);
                 }).orElseThrow(() -> new AlreadyExistsException("Oops! " + request.getEmail() + " already exists!"));
