@@ -62,6 +62,9 @@ public class UserService implements IUserService {
                 .map(existingUser -> {
                     existingUser.setFirstName(request.getFirstName());
                     existingUser.setLastName(request.getLastName());
+                    if (request.getPassword() != null && !request.getPassword().isEmpty()) {
+                        existingUser.setPassword(passwordEncoder.encode(request.getPassword()));
+                    }
                     return userRepository.save(existingUser);
                 }).orElseThrow(() -> new ResourceNotFoundException("User not found!"));
     }
