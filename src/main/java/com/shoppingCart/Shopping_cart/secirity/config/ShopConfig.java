@@ -30,29 +30,44 @@ public class ShopConfig {
     private final ShopUserDetailsService userDetailsService;
     private final JwtAuthEntryPoint authEntryPoint;
 
+    //các URL được bảo mật
     private static final List<String> SECURED_URLS =
             List.of("/api/v1/carts/**", "/api/v1/cartItems/**");
 
+
+    //Tạo một ModelMapper instance được dùng để map đối tượng giữa DTO và entity.
+    //Không liên quan trực tiếp đến bảo mật nhưng có thể được sử dụng ở các phần khác của ứng dụng.
     @Bean
     public ModelMapper modelMapper() {
         return new ModelMapper();
     }
 
+
+    //BCryptPasswordEncoder băm mật khẩu an toàn để lưu trữ mật khẩu trong cơ sở dữ liệu
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
+
+    //Khởi tạo bean AuthTokenFilter, một bộ lọc tùy chỉnh để chặn và xác minh token JWT từ các yêu cầu đến.
+    //Bộ lọc này sẽ được thêm vào chuỗi bộ lọc trong filterChain().
     @Bean
     public AuthTokenFilter authTokenFilter() {
         return new AuthTokenFilter();
     }
 
+
+    //quản lý các yêu cầu xác thực.
+    //Thành phần này cần thiết để xác thực người dùng trong AuthTokenFilter
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration authConfig) throws Exception {
         return authConfig.getAuthenticationManager();
     }
 
+
+    //xác thực người dùng từ cơ sở dữ liệu.
+    //Sử dụng userDetailsService để truy xuất thông tin người dùng và passwordEncoder để xác minh mật khẩu.
     @Bean
     public DaoAuthenticationProvider daoAuthenticationProvider() {
         var authProvider = new DaoAuthenticationProvider();
@@ -62,15 +77,16 @@ public class ShopConfig {
     }
 
 
+    //Phương thức này cấu hình các thiết lập bảo mật
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        http.csrf(AbstractHttpConfigurer::disable)
-                .exceptionHandling(exception -> exception.authenticationEntryPoint(authEntryPoint))
-                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+        http.csrf(AbstractHttpConfigurer::disable) //Vô hiệu hóa CSRF
+                .exceptionHandling(exception -> exception.authenticationEntryPoint(authEntryPoint)) //Xử lý ngoại lệ
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) //Quản lý phiên
                 .authorizeHttpRequests(auth -> auth.requestMatchers(SECURED_URLS.toArray(String[]::new)).authenticated()
-                        .anyRequest().permitAll());
-        http.authenticationProvider(daoAuthenticationProvider());
-        http.addFilterBefore(authTokenFilter(), UsernamePasswordAuthenticationFilter.class);
+                        .anyRequest().permitAll()); //Ủy quyền
+        http.authenticationProvider(daoAuthenticationProvider()); //Provider xác thực
+        http.addFilterBefore(authTokenFilter(), UsernamePasswordAuthenticationFilter.class); //Bộ lọc xác thực JWT
         return http.build();
     }
 }

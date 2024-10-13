@@ -1,11 +1,7 @@
 package com.shoppingCart.Shopping_cart.request;
 
 import com.shoppingCart.Shopping_cart.model.Category;
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
 import lombok.Data;
-import lombok.Getter;
 
 import java.math.BigDecimal;
 
