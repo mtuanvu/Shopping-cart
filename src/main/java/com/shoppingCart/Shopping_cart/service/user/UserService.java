@@ -1,6 +1,6 @@
 package com.shoppingCart.Shopping_cart.service.user;
 
-import com.shoppingCart.Shopping_cart.data.RoleRepository;
+import com.shoppingCart.Shopping_cart.repository.RoleRepository;
 import com.shoppingCart.Shopping_cart.dto.UserDto;
 import com.shoppingCart.Shopping_cart.exceptions.AlreadyExistsException;
 import com.shoppingCart.Shopping_cart.exceptions.ResourceNotFoundException;

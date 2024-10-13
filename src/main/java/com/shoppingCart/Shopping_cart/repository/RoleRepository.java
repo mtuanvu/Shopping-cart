@@ -1,4 +1,4 @@
-package com.shoppingCart.Shopping_cart.data;
+package com.shoppingCart.Shopping_cart.repository;
 
 import com.shoppingCart.Shopping_cart.model.Role;
 import org.springframework.data.jpa.repository.JpaRepository;
