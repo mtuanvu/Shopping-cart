@@ -6,7 +6,6 @@ import com.shoppingCart.Shopping_cart.model.Category;
 import com.shoppingCart.Shopping_cart.response.ApiResponse;
 import com.shoppingCart.Shopping_cart.service.category.ICategoryService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
