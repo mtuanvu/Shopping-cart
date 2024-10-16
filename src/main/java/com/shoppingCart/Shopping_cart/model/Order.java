@@ -1,5 +1,6 @@
 package com.shoppingCart.Shopping_cart.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.shoppingCart.Shopping_cart.enums.OrderStatus;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;

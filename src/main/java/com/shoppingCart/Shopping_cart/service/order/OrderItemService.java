@@ -1,6 +1,8 @@
 package com.shoppingCart.Shopping_cart.service.order;
 
 import com.shoppingCart.Shopping_cart.dto.OrderItemDto;
+import com.shoppingCart.Shopping_cart.exceptions.ResourceNotFoundException;
+import com.shoppingCart.Shopping_cart.model.Order;
 import com.shoppingCart.Shopping_cart.model.OrderItem;
 import com.shoppingCart.Shopping_cart.repository.OrderItemRepository;
 import com.shoppingCart.Shopping_cart.repository.OrderRepository;
@@ -9,7 +11,6 @@ import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -20,32 +21,32 @@ public class OrderItemService implements IOrderItemService {
     private final ModelMapper modelMapper;
 
     @Override
-    public OrderItem addOrderItem(OrderItemDto orderItemDto) {
+    public OrderItemDto addOrderItem(Long orderId, OrderItemDto orderItemDto) {
+        Order order = orderRepository.findById(orderId)
+                .orElseThrow(() -> new ResourceNotFoundException("Order not found"));
         OrderItem orderItem = modelMapper.map(orderItemDto, OrderItem.class);
-        return orderItemRepository.save(orderItem);
-    }
-
-    @Override
-    public void deleteOrderItem(Long orderItemId) {
-        orderItemRepository.deleteById(orderItemId);
+        orderItem.setOrder(order);
+        OrderItem savedItem = orderItemRepository.save(orderItem);
+        return modelMapper.map(savedItem, OrderItemDto.class);
     }
 
     @Override
     public List<OrderItemDto> getOrderItemsByOrderId(Long orderId) {
-        return orderItemRepository.findAll()
+        return orderItemRepository.findAllByOrderId(orderId)
                 .stream()
-                .filter(orderItem -> orderItem.getOrder().getId().equals(orderId))
-                .map(this::convertToOrderItemDto)
+                .map(orderItem -> modelMapper.map(orderItem, OrderItemDto.class))
                 .collect(Collectors.toList());
     }
 
     @Override
-    public Optional<OrderItem> getOrderItemById(Long id){
-        return orderItemRepository.findById(id);
-    }
+    public void deleteOrderItem(Long orderId, Long itemId) {
+        OrderItem orderItem = orderItemRepository.findById(itemId)
+                .orElseThrow(() -> new ResourceNotFoundException("Order Item not found"));
 
-    @Override
-    public OrderItemDto convertToOrderItemDto(OrderItem orderItem) {
-        return modelMapper.map(orderItem, OrderItemDto.class);
+        if (!orderItem.getOrder().getId().equals(orderId)) {
+            throw new ResourceNotFoundException("Order ID does not match with OrderItem's Order");
+        }
+
+        orderItemRepository.delete(orderItem);
     }
 }
