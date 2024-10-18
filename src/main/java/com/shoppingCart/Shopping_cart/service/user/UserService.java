@@ -8,6 +8,7 @@ import com.shoppingCart.Shopping_cart.model.Role;
 import com.shoppingCart.Shopping_cart.model.User;
 import com.shoppingCart.Shopping_cart.repository.UserRepository;
 import com.shoppingCart.Shopping_cart.request.CreateUserRequest;
+import com.shoppingCart.Shopping_cart.request.RegisterUserRequest;
 import com.shoppingCart.Shopping_cart.request.UserUpdateRequest;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -36,6 +37,25 @@ public class UserService implements IUserService {
 
     @Override
     public User createUser(CreateUserRequest request) {
+        return Optional.of(request)
+                .filter(user -> !userRepository.existsByEmail(request.getEmail()))
+                .map(req -> {
+                    User user = new User();
+                    user.setEmail(request.getEmail());
+                    user.setPassword(passwordEncoder.encode(request.getPassword()));
+                    user.setFirstName(request.getFirstName());
+                    user.setLastName(request.getLastName());
+
+                    Role defaultRole = roleRepository.findByName("ROLE_USER")
+                            .orElseThrow(() -> new RuntimeException("Role not found"));
+                    user.setRoles(Set.of(defaultRole));
+
+                    return userRepository.save(user);
+                }).orElseThrow(() -> new AlreadyExistsException("Oops! " + request.getEmail() + " already exists!"));
+    }
+
+    @Override
+    public User registerUser(RegisterUserRequest request) {
         return Optional.of(request)
                 .filter(user -> !userRepository.existsByEmail(request.getEmail()))
                 .map(req -> {

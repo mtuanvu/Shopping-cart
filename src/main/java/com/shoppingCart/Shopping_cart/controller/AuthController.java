@@ -3,8 +3,8 @@ package com.shoppingCart.Shopping_cart.controller;
 import com.shoppingCart.Shopping_cart.dto.UserDto;
 import com.shoppingCart.Shopping_cart.exceptions.AlreadyExistsException;
 import com.shoppingCart.Shopping_cart.model.User;
-import com.shoppingCart.Shopping_cart.request.CreateUserRequest;
 import com.shoppingCart.Shopping_cart.request.LoginRequest;
+import com.shoppingCart.Shopping_cart.request.RegisterUserRequest;
 import com.shoppingCart.Shopping_cart.response.ApiResponse;
 import com.shoppingCart.Shopping_cart.response.JwtResponse;
 import com.shoppingCart.Shopping_cart.secirity.jwt.JwtUtils;
@@ -54,9 +54,9 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<ApiResponse> resgister(@RequestBody CreateUserRequest request){
+    public ResponseEntity<ApiResponse> resgister(@Valid @RequestBody RegisterUserRequest request){
         try {
-            User user = userService.createUser(request);
+            User user = userService.registerUser(request);
             UserDto userDto = userService.convertUserToUserDto(user);
             return ResponseEntity.ok(new ApiResponse("Register Successfully!", userDto));
         }catch (AlreadyExistsException e){
